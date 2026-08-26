@@ -1,0 +1,795 @@
+/* =========================================================
+   데이트 신청 사이트 - 디자인
+   ========================================================= */
+
+:root {
+  --pink-50: #fff0f6;
+  --pink-100: #ffd9e8;
+  --pink-300: #ff9ec7;
+  --pink-500: #ff6fa5;
+  --pink-600: #ee5390;
+  --purple-300: #c9b6ff;
+  --purple-500: #9b7ef0;
+  --ink: #4a3350;
+  --ink-soft: #8a7690;
+  --cream: #fffaf3;
+  --white: #ffffff;
+  --stamp-red: #e2456f;
+  --shadow: 0 12px 30px rgba(180, 120, 160, 0.22);
+  --shadow-sm: 0 6px 16px rgba(180, 120, 160, 0.16);
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Gowun Dodum', 'Noto Sans KR', sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at 20% 20%, #ffe3ef 0%, transparent 55%),
+              radial-gradient(circle at 80% 0%, #e7ddff 0%, transparent 50%),
+              linear-gradient(160deg, #fff5fa 0%, #f6efff 100%);
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 60px;
+}
+
+h1, h2 {
+  font-family: 'Jua', 'Gowun Dodum', sans-serif;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------
+   레이아웃 / 진행바
+--------------------------------------------------------- */
+
+.app {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--pink-500), var(--purple-500));
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.stage {
+  width: 100%;
+  position: relative;
+}
+
+/* 단계 전환: JS가 .active 클래스를 붙였다 뗐다 함 */
+.step {
+  display: none;
+  width: 100%;
+  animation: fadeIn 0.35s ease;
+}
+
+.step.active {
+  display: flex;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------
+   공통 카드 / 타이포
+--------------------------------------------------------- */
+
+.card {
+  width: 100%;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 36px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--pink-600);
+}
+
+.title {
+  font-size: 26px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.result-title {
+  font-size: 24px;
+  text-align: center;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-top: 6px;
+}
+
+.text-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--pink-100);
+  background: var(--pink-50);
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.text-input:focus {
+  border-color: var(--pink-500);
+  background: var(--white);
+}
+
+.textarea {
+  resize: none;
+  min-height: 90px;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------
+   버튼
+--------------------------------------------------------- */
+
+.btn {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--pink-500), var(--purple-500));
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary {
+  background: var(--pink-50);
+  color: var(--pink-600);
+  border: 2px solid var(--pink-100);
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--ink-soft);
+  padding: 10px 14px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+}
+
+.button-row .btn {
+  flex: 1;
+}
+
+.step-nav {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.step-nav .btn-primary,
+.step-nav .btn-secondary {
+  flex: 1;
+}
+
+/* ---------------------------------------------------------
+   0단계 / 인트로 카드
+--------------------------------------------------------- */
+
+.intro-card {
+  align-items: stretch;
+  text-align: left;
+}
+
+.intro-card--receiver {
+  text-align: center;
+  align-items: center;
+}
+
+.envelope {
+  font-size: 44px;
+  margin: 0;
+}
+
+.share-link-box {
+  margin-top: 4px;
+}
+
+.copied-hint {
+  text-align: center;
+  color: var(--pink-600);
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ---------------------------------------------------------
+   1단계: Yes / No 도망 버튼
+--------------------------------------------------------- */
+
+.ask-card {
+  align-items: center;
+  text-align: center;
+}
+
+.ask-message {
+  min-height: 20px;
+  font-size: 14px;
+  color: var(--pink-600);
+  font-weight: 700;
+}
+
+.ask-stage {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(160deg, var(--pink-50), #f4eeff);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.btn-bubble {
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 18px;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 30px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-yes {
+  background: linear-gradient(135deg, var(--pink-500), var(--purple-500));
+  color: var(--white);
+  transition: transform 0.25s ease, font-size 0.25s ease, padding 0.25s ease;
+}
+#btn-yes:hover {
+  transform: scale(1.1);
+  filter: brightness(1.1); /* 또는 background-color: #변경할색상; */
+}
+
+.btn-no {
+  background: var(--white);
+  color: var(--ink-soft);
+  border: 2px solid var(--pink-100);
+  /* JS가 top/left를 바꿔가며 도망치게 만들 때를 위한 트랜지션 */
+  /* position: absolute; */
+  /* 초기 위치: Yes 버튼과 겹치지 않도록 오른쪽 아래쪽에 배치.
+     JS에서 top/left를 px로 재계산해 덮어쓰게 됩니다. */
+  /* top: 62%; */
+  left: 66%;
+  transition: top 0.25s ease, left 0.25s ease, transform 0.15s ease;
+}
+
+/* ---------------------------------------------------------
+   2/4/5단계: 카드 선택 그리드
+--------------------------------------------------------- */
+
+.select-card {
+  align-items: stretch;
+  text-align: left;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.card-grid--vertical {
+  grid-template-columns: 1fr;
+}
+
+.option-card {
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--pink-50);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 16px 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.option-card:active {
+  transform: scale(0.97);
+}
+
+.option-card.selected {
+  border-color: var(--pink-500);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.option-emoji {
+  font-size: 26px;
+}
+
+.option-card--seat {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+}
+
+.option-card--seat .option-emoji {
+  font-size: 30px;
+}
+
+.option-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.option-text strong {
+  font-size: 16px;
+}
+
+.option-text small {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------
+   6단계: 체크박스 리스트
+--------------------------------------------------------- */
+
+.checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: var(--pink-50);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.checkbox-item input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--pink-500);
+}
+
+/* ---------------------------------------------------------
+   결과 화면: 영화 티켓
+--------------------------------------------------------- */
+
+.result-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.ticket {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  background: var(--cream);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  /* 참고: 위/아래 가장자리 톱니(펀칭) 마스크는 html2canvas가 CSS mask-image를
+     지원하지 않아 다운로드 이미지에서 사라지므로 쓰지 않음.
+     대신 좌우 원형 노치(.ticket-notch, .ticket-perf-notch)로 "찢는 티켓" 느낌을 냄. */
+}
+
+.ticket-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-top {
+  padding: 26px 24px 20px;
+  text-align: center;
+  background: linear-gradient(160deg, #fff, var(--pink-50));
+}
+
+.ticket-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.ticket-brand {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  color: var(--pink-600);
+}
+
+.ticket-no {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-feature {
+  font-size: 25px;
+  color: var(--ink);
+}
+
+.ticket-names {
+  margin-top: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ticket-arrow {
+  color: var(--pink-500);
+}
+
+.ticket-divider {
+  position: relative;
+  height: 0;
+  border-top: 3px dashed var(--pink-200, #ffd9e8);
+  margin: 0 26px;
+}
+
+.ticket-notch {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fdf2f7, #f6efff 70%);
+  box-shadow: inset 0 2px 4px rgba(180, 120, 160, 0.2);
+  z-index: 2;
+}
+
+.ticket-notch--left {
+  left: -13px;
+}
+
+.ticket-notch--right {
+  right: -13px;
+}
+
+/* ---------------------------------------------------------
+   티켓 스텁(반쪽 조각) - 실제 영화 티켓처럼 세로 절취선으로 분리
+--------------------------------------------------------- */
+
+.ticket-perforation {
+  position: relative;
+  flex: none;
+  width: 0;
+  border-left: 3px dashed rgba(154, 110, 140, 0.35);
+}
+
+.ticket-perf-notch {
+  position: absolute;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fdf2f7, #f6efff 70%);
+  box-shadow: inset 0 2px 4px rgba(180, 120, 160, 0.2);
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.ticket-perf-notch--top {
+  top: -11px;
+}
+
+.ticket-perf-notch--bottom {
+  bottom: -11px;
+}
+
+.ticket-stub {
+  position: relative;
+  flex: none;
+  width: 84px;
+  overflow: hidden;
+  background: linear-gradient(200deg, var(--pink-500), var(--purple-500));
+  color: var(--white);
+}
+
+/* 스텁 안의 내용을 가로 한 줄로 배치한 뒤 통째로 90도 회전.
+   (개별 요소를 writing-mode/transform으로 따로 돌리면 flex 배치 크기가
+   회전 전 기준으로 계산돼 서로 겹치는 문제가 있어, 한 덩어리로 묶어서 회전) */
+.stub-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max-content;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  white-space: nowrap;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+}
+
+.stub-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+}
+
+.stub-emoji {
+  font-size: 16px;
+}
+
+.stub-value {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+}
+
+.stub-seat {
+  opacity: 1;
+}
+
+.stub-no {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-bottom {
+  padding: 18px 24px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ticket-row {
+  display: flex;
+  gap: 16px;
+}
+
+.ticket-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(154, 110, 140, 0.2);
+}
+
+.ticket-field--full {
+  width: 100%;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ticket-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+
+.ticket-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.ticket-message-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.ticket-message {
+  align-self: stretch;
+  margin: 0;
+  text-align: left;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  min-height: 18px;
+}
+
+/* 귀여운 도장 그래픽 - 실제 찍은 것처럼 살짝 기울여서 크게 배치 */
+.ticket-stamp {
+  flex: none;
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  border: 6px solid var(--stamp-red);
+  color: var(--stamp-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-10deg);
+  opacity: 0.85;
+  position: relative;
+}
+
+.ticket-stamp::before {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border: 3px dashed var(--stamp-red);
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.ticket-stamp span {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.ticket-barcode {
+  height: 44px;
+  margin: 10px 24px 18px;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  border-radius: 4px;
+  overflow: hidden;
+  opacity: 0.85;
+}
+
+/* 티켓 다운로드/공유에 쓰는 html2canvas가 repeating-linear-gradient를
+   렌더링하지 못해서(캡처 시 흰 화면), 바코드는 CSS 그라디언트 대신
+   JS(renderTicket)가 만드는 실제 막대 요소(.barcode-bar)로 그림 */
+.barcode-bar {
+  flex: 0 0 auto;
+  height: 100%;
+  background: #4a3350;
+}
+
+.result-actions {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.result-actions .btn {
+  flex: 1;
+}
+
+.hint-text {
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------
+   반응형
+--------------------------------------------------------- */
+
+@media (max-width: 380px) {
+  .card {
+    padding: 28px 20px 26px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .ask-stage {
+    height: 220px;
+  }
+}

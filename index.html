@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>데이트 신청 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- 진행바: 1~7단계에서만 표시 -->
+  <div class="progress-track" id="progressTrack">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <main class="stage">
+
+    <!-- ============================================================
+         0-A단계: 보내는 사람 - 이름 입력
+         URL에 from/to 파라미터가 없을 때만 처음 보여짐
+    ============================================================= -->
+    <section class="step active" id="step-names" data-step="names">
+      <div class="card intro-card">
+        <p class="eyebrow">STEP 0</p>
+        <h1 class="title">누구에게<br>데이트를 신청할까요?</h1>
+        <p class="subtitle">이름을 입력하면, 상대방에게 보낼 전용 링크가 만들어져요.</p>
+
+        <label class="field-label" for="input-from-name">내 이름</label>
+        <input type="text" id="input-from-name" class="text-input" placeholder="신청하는 사람" maxlength="10">
+
+        <label class="field-label" for="input-to-name">상대방 이름</label>
+        <input type="text" id="input-to-name" class="text-input" placeholder="신청받는 사람" maxlength="10">
+
+        <button type="button" id="btn-create-link" class="btn btn-primary btn-block">
+          링크 만들기 💌
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         0-B단계: 보내는 사람 - 공유 링크 안내
+    ============================================================= -->
+    <section class="step" id="step-share" data-step="share">
+      <div class="card intro-card">
+        <p class="eyebrow">STEP 0</p>
+        <h1 class="title">링크가 완성됐어요! 🎉</h1>
+        <p class="subtitle">아래 링크를 상대방에게 보내주세요.<br>상대방이 이 링크로 들어오면 신청이 시작돼요.</p>
+
+        <div class="share-link-box">
+          <input type="text" id="share-link-output" class="text-input" readonly>
+        </div>
+
+        <div class="button-row">
+          <button type="button" id="btn-copy-link" class="btn btn-secondary">링크 복사 📋</button>
+          <button type="button" id="btn-native-share" class="btn btn-secondary">공유하기 🔗</button>
+        </div>
+
+        <p class="copied-hint" id="copiedHint" hidden>링크가 복사됐어요!</p>
+
+        <button type="button" id="btn-make-new-link" class="btn btn-text">
+          이름 다시 입력하기
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         받는 사람 전용: 인트로 (URL에 from/to 파라미터가 있을 때만 보여짐)
+    ============================================================= -->
+    <section class="step" id="step-intro" data-step="intro">
+      <div class="card intro-card intro-card--receiver">
+        <p class="envelope">💌</p>
+        <h1 class="title" id="introTitle">누군가 당신에게<br>메시지를 보냈어요</h1>
+        <p class="subtitle" id="introSubtitle"></p>
+        <button type="button" id="btn-intro-continue" class="btn btn-primary btn-block">
+          확인하기
+        </button>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         1단계: Yes / No (No버튼 도망)
+    ============================================================= -->
+    <section class="step" id="step-ask" data-step="ask">
+      <div class="card ask-card">
+        <p class="eyebrow">STEP 1</p>
+        <h1 class="title" id="askQuestion">나랑 데이트 할래?</h1>
+        <p class="ask-message" id="noEscapeMessage">&nbsp;</p>
+
+        <div class="ask-stage" id="askStage">
+          <button type="button" id="btn-yes" class="btn-bubble btn-yes">Yes 🙆‍♀️</button>
+          <button type="button" id="btn-no" class="btn-bubble btn-no">No</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         2단계: 데이트 종류 선택
+    ============================================================= -->
+    <section class="step" id="step-type" data-step="type">
+      <div class="card select-card">
+        <p class="eyebrow">STEP 2</p>
+        <h1 class="title">어떤 데이트를<br>하고 싶어요?</h1>
+
+        <div class="card-grid" id="typeOptions" data-group="type">
+          <button type="button" class="option-card" data-value="영화"><span class="option-emoji">🎬</span>영화</button>
+          <button type="button" class="option-card" data-value="카페/대화"><span class="option-emoji">☕</span>카페 / 대화</button>
+          <button type="button" class="option-card" data-value="산책"><span class="option-emoji">🌳</span>산책</button>
+          <button type="button" class="option-card" data-value="맛집"><span class="option-emoji">🍽️</span>맛집 탐방</button>
+          <button type="button" class="option-card" data-value="전시/공연"><span class="option-emoji">🎨</span>전시 / 공연</button>
+          <button type="button" class="option-card" data-value="놀이공원"><span class="option-emoji">🎡</span>놀이공원</button>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-text btn-prev" data-prev-target="ask">이전</button>
+          <button type="button" id="btn-next-type" class="btn btn-primary" disabled>다음</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         3단계: 날짜 및 시간 선택
+    ============================================================= -->
+    <section class="step" id="step-datetime" data-step="datetime">
+      <div class="card select-card">
+        <p class="eyebrow">STEP 3</p>
+        <h1 class="title">언제 만날까요?</h1>
+
+        <label class="field-label" for="input-date">날짜</label>
+        <input type="date" id="input-date" class="text-input">
+
+        <label class="field-label" for="input-time">시간</label>
+        <input type="time" id="input-time" class="text-input">
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-text btn-prev" data-prev-target="type">이전</button>
+          <button type="button" id="btn-next-datetime" class="btn btn-primary" disabled>다음</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4단계: 장소 / 지역 선택
+    ============================================================= -->
+    <section class="step" id="step-place" data-step="place">
+      <div class="card select-card">
+        <p class="eyebrow">STEP 4</p>
+        <h1 class="title">어디서 만날까요?</h1>
+
+        <div class="card-grid" id="placeOptions" data-group="place">
+          <button type="button" class="option-card" data-value="홍대"><span class="option-emoji">🎸</span>홍대</button>
+          <button type="button" class="option-card" data-value="강남"><span class="option-emoji">🏙️</span>강남</button>
+          <button type="button" class="option-card" data-value="성수"><span class="option-emoji">🏭</span>성수</button>
+          <button type="button" class="option-card" data-value="잠실"><span class="option-emoji">🎢</span>잠실</button>
+          <button type="button" class="option-card" data-value="네가 골라줘"><span class="option-emoji">🎲</span>네가 골라줘</button>
+        </div>
+
+        <label class="field-label" for="input-place-custom">직접 입력 (선택)</label>
+        <input type="text" id="input-place-custom" class="text-input" placeholder="원하는 장소를 적어주세요">
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-text btn-prev" data-prev-target="datetime">이전</button>
+          <button type="button" id="btn-next-place" class="btn btn-primary" disabled>다음</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         5단계: 좌석 등급 선택
+    ============================================================= -->
+    <section class="step" id="step-seat" data-step="seat">
+      <div class="card select-card">
+        <p class="eyebrow">STEP 5</p>
+        <h1 class="title">좌석 등급을<br>골라주세요 🎟️</h1>
+
+        <div class="card-grid card-grid--vertical" id="seatOptions" data-group="seat">
+          <button type="button" class="option-card option-card--seat" data-value="VIP석 (내 옆자리)">
+            <span class="option-emoji">👑</span>
+            <span class="option-text">
+              <strong>VIP석</strong>
+              <small>내 옆자리</small>
+            </span>
+          </button>
+          <button type="button" class="option-card option-card--seat" data-value="커플석">
+            <span class="option-emoji">💑</span>
+            <span class="option-text">
+              <strong>커플석</strong>
+              <small>딱 붙어 앉기</small>
+            </span>
+          </button>
+          <button type="button" class="option-card option-card--seat" data-value="일반석">
+            <span class="option-emoji">🪑</span>
+            <span class="option-text">
+              <strong>일반석</strong>
+              <small>그래도 옆자리</small>
+            </span>
+          </button>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-text btn-prev" data-prev-target="place">이전</button>
+          <button type="button" id="btn-next-seat" class="btn btn-primary" disabled>다음</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         6단계: 특별 요청사항 (다중 선택)
+    ============================================================= -->
+    <section class="step" id="step-requests" data-step="requests">
+      <div class="card select-card">
+        <p class="eyebrow">STEP 6</p>
+        <h1 class="title">이건 꼭 해줘요 🙈</h1>
+        <p class="subtitle">해당하는 걸 모두 골라주세요 (선택 사항)</p>
+
+        <div class="checkbox-list" id="requestOptions">
+          <label class="checkbox-item">
+            <input type="checkbox" class="request-checkbox" value="손잡고 걷기">
+            <span>손잡고 걷기</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" class="request-checkbox" value="사진 많이 찍기">
+            <span>사진 많이 찍기</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" class="request-checkbox" value="맛있는거 사주기">
+            <span>맛있는거 사주기</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" class="request-checkbox" value="애교 부리기">
+            <span>애교 부리기</span>
+          </label>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-text btn-prev" data-prev-target="seat">이전</button>
+          <button type="button" id="btn-next-requests" class="btn btn-primary">다음</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         7단계: 한마디 메시지
+    ============================================================= -->
+    <section class="step" id="step-message" data-step="message">
+      <div class="card select-card">
+        <p class="eyebrow">STEP 7</p>
+        <h1 class="title">마지막으로,<br>한마디 남겨주세요 ✏️</h1>
+        <p class="subtitle">티켓에 함께 인쇄돼요 (선택 사항)</p>
+
+        <textarea id="input-message" class="text-input textarea" maxlength="60" placeholder="예: 그날 진짜 기대돼!"></textarea>
+
+        <div class="step-nav">
+          <button type="button" class="btn btn-text btn-prev" data-prev-target="requests">이전</button>
+          <button type="button" id="btn-next-message" class="btn btn-primary">티켓 만들기 🎫</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         결과 화면: 영화 티켓
+    ============================================================= -->
+    <section class="step" id="step-result" data-step="result">
+      <div class="result-wrap">
+
+        <h1 class="title result-title">티켓이 완성됐어요! 🎉</h1>
+
+        <div class="ticket" id="ticket">
+          <div class="ticket-main">
+            <div class="ticket-top">
+              <div class="ticket-top-row">
+                <p class="ticket-brand">✦ DATE CINEMA ✦</p>
+                <p class="ticket-no">NO. <span id="ticketNo">--------</span></p>
+              </div>
+              <h2 class="ticket-feature" id="ticketType">-</h2>
+              <div class="ticket-names">
+                <span id="ticketFrom">-</span>
+                <span class="ticket-arrow">→</span>
+                <span id="ticketTo">-</span>
+              </div>
+            </div>
+
+            <div class="ticket-notch ticket-notch--left"></div>
+            <div class="ticket-notch ticket-notch--right"></div>
+            <div class="ticket-divider"></div>
+
+            <div class="ticket-bottom">
+              <div class="ticket-row">
+                <div class="ticket-field">
+                  <span class="ticket-label">DATE</span>
+                  <span class="ticket-value" id="ticketDate">-</span>
+                </div>
+                <div class="ticket-field">
+                  <span class="ticket-label">TIME</span>
+                  <span class="ticket-value" id="ticketTime">-</span>
+                </div>
+              </div>
+              <div class="ticket-row">
+                <div class="ticket-field">
+                  <span class="ticket-label">PLACE</span>
+                  <span class="ticket-value" id="ticketPlace">-</span>
+                </div>
+                <div class="ticket-field">
+                  <span class="ticket-label">SEAT</span>
+                  <span class="ticket-value" id="ticketSeat">-</span>
+                </div>
+              </div>
+              <div class="ticket-field ticket-field--full">
+                <span class="ticket-label">REQUESTS</span>
+                <span class="ticket-value" id="ticketRequests">-</span>
+              </div>
+
+              <div class="ticket-message-row">
+                <p class="ticket-message" id="ticketMessage"></p>
+                <div class="ticket-stamp" aria-hidden="true"><span>LOVE</span></div>
+              </div>
+            </div>
+
+            <div class="ticket-barcode" id="ticketBarcode" aria-hidden="true"></div>
+          </div>
+
+          <div class="ticket-perforation">
+            <div class="ticket-perf-notch ticket-perf-notch--top"></div>
+            <div class="ticket-perf-notch ticket-perf-notch--bottom"></div>
+          </div>
+
+          <div class="ticket-stub">
+            <div class="stub-inner">
+              <span class="stub-label">ADMIT TWO</span>
+              <span class="stub-emoji">🎬</span>
+              <span class="stub-value" id="stubDate">-</span>
+              <span class="stub-value" id="stubTime">-</span>
+              <span class="stub-value stub-seat" id="stubSeat">-</span>
+              <span class="stub-no" id="stubNo">--------</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button type="button" id="btn-download" class="btn btn-primary">이미지 다운로드</button>
+          <button type="button" id="btn-share" class="btn btn-secondary">공유하기</button>
+        </div>
+
+        <p class="hint-text">이 티켓을 캡처하거나 공유해서 상대방에게 보여주세요!</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- html2canvas: 티켓을 이미지로 캡처할 때 사용 (자세한 사용법은 GUIDE.md 참고) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
