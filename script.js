@@ -292,14 +292,18 @@ function setupDateTimeStep() {
 // ---------------------------------------------------------
 function setupRequestCheckboxes() {
   var checkboxes = document.querySelectorAll('.request-checkbox');
+  var customInput = document.getElementById('input-request-custom');
 
-  checkboxes.forEach((cb) => {
-    cb.addEventListener('change', () => {
-      dateData.requests = Array.from(checkboxes)
-        .filter((c) => c.checked)
-        .map((c) => c.value);
-    });
-  });
+  function updateRequests() {
+    var checked = Array.from(checkboxes)
+      .filter((c) => c.checked)
+      .map((c) => c.value);
+    var custom = customInput.value.trim();
+    dateData.requests = custom ? checked.concat(custom) : checked;
+  }
+
+  checkboxes.forEach((cb) => cb.addEventListener('change', updateRequests));
+  customInput.addEventListener('input', updateRequests);
 
   document.getElementById('btn-next-requests').addEventListener('click', () => goToStep('message'));
 }
