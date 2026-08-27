@@ -382,25 +382,40 @@ function setupResultActions() {
 }
 
 function downloadTicket() {
+  // 폰트가 완전히 로드된 뒤에 캡처해야 텍스트 줄바꿈/겹침 문제가 안 생김
   document.fonts.ready.then(() => {
-    html2canvas(element, { useCORS: true }).then(canvas => {
-      const myImage = canvas.toDataURL('image/png');
-      
-      // iOS 환경 체크
-      const isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
-      
+    html2canvas(document.getElementById('ticket'), {
+      scale: 2,
+      backgroundColor: null,
+      useCORS: true,
+    }).then((canvas) => {
+      var isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
+
       if (isIOS) {
-          // iOS에서는 새 창(탭)으로 이미지를 띄워 사용자가 꾹 눌러 저장하게 유도
-          window.location.href = myImage;
-      } else {
-          // 안드로이드 및 PC
-          const link = document.createElement('a');
-          link.href = myImage;
-          link.download = 'capture.png';
-          link.click();
+        // iOS Safari는 이미지에 대한 <a download>를 제대로 지원하지 않음.
+        // 이미지를 화면에 띄워서(페이지 이동) 사용자가 길게 눌러 저장하게 유도.
+        var dataUrl = canvas.toDataURL('image/png');
+        window.location.href = dataUrl;
+        return;
       }
-    });    
-  }
+
+      // PC / 안드로이드: blob 방식으로 실제 다운로드 트리거
+      canvas.toBlob((blob) => {
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.download = `date-ticket-${dateData.to || 'ticket'}.png`;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+
+        // 일부 브라우저의 다운로드 확인 지연을 고려해 정리도 지연
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }, 3000);
+      }, 'image/png');
+    });
+  });
 }
 
 function shareTicket() {
