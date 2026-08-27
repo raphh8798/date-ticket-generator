@@ -44,8 +44,19 @@ document.addEventListener('DOMContentLoaded', init);
 
 function init() {
   var params = new URLSearchParams(location.search);
-  var fromParam = params.get('from');
-  var toParam = params.get('to');
+  var fromParam = null;
+  var toParam = null;
+
+  var dParam = params.get('d');
+  if (dParam) {
+    try {
+      var decoded = JSON.parse(fromBase64Url(dParam));
+      fromParam = decoded.from;
+      toParam = decoded.to;
+    } catch (e) {
+      // 손상된 링크면 무시하고 이름 입력 화면으로
+    }
+  }
 
   if(fromParam && toParam){
     dateData.from = fromParam;
@@ -126,11 +137,22 @@ document.getElementById('btn-copy-link').addEventListener('click', () => { copyS
 document.getElementById('btn-native-share').addEventListener('click', () => { nativeShareLink(); });
 document.getElementById('btn-make-new-link').addEventListener('click', () => { goToStep('names'); });
 
+function toBase64Url(str) {
+  var b64 = btoa(unescape(encodeURIComponent(str)));
+  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function fromBase64Url(b64url) {
+  var b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+  while (b64.length % 4) b64 += '=';
+  return decodeURIComponent(escape(atob(b64)));
+}
+
 function createShareLink() {
   var url = new URL(location.href);
   url.search = '';
-  url.searchParams.set('from', dateData.from);
-  url.searchParams.set('to', dateData.to);
+  var payload = JSON.stringify({ from: dateData.from, to: dateData.to });
+  url.searchParams.set('d', toBase64Url(payload));
   document.getElementById('share-link-output').value = url.toString();  
 
 }
