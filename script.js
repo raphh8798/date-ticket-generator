@@ -382,17 +382,22 @@ function setupResultActions() {
 }
 
 function downloadTicket() {
-  html2canvas(document.getElementById('ticket'), { scale: 2, backgroundColor: null }).then((canvas) => {
-    canvas.toBlob((blob) => {
-      var url = URL.createObjectURL(blob);
-      var link = document.createElement('a');
-      link.download = `date-ticket-${dateData.to || 'ticket'}.png`;
-      link.href = url;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }, 'image/png');
+  html2canvas(element, { useCORS: true }).then(canvas => {
+    const myImage = canvas.toDataURL('image/png');
+    
+    // iOS 환경 체크
+    const isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
+    
+    if (isIOS) {
+        // iOS에서는 새 창(탭)으로 이미지를 띄워 사용자가 꾹 눌러 저장하게 유도
+        window.location.href = myImage;
+    } else {
+        // 안드로이드 및 PC
+        const link = document.createElement('a');
+        link.href = myImage;
+        link.download = 'capture.png';
+        link.click();
+    }
   });
 }
 
