@@ -451,13 +451,15 @@ function generateTicketImage() {
   downloadBtn.disabled = true;
   shareBtn.disabled = true;
   hint.hidden = false;
+  hint.textContent = '티켓 이미지 만드는 중...';
 
-  document.fonts.ready.then(() => {
-    html2canvas(document.getElementById('ticket'), {
+  document.fonts.ready
+    .then(() => html2canvas(document.getElementById('ticket'), {
       scale: 2,
       backgroundColor: null,
       useCORS: true,
-    }).then((canvas) => {
+    }))
+    .then((canvas) => {
       var dataUrl = canvas.toDataURL('image/png');
       window.ticketDataUrl = dataUrl;
 
@@ -469,8 +471,17 @@ function generateTicketImage() {
       downloadBtn.disabled = false;
       shareBtn.disabled = false;
       hint.hidden = true;
+    })
+    .catch((err) => {
+      // 캡처 실패 시 버튼이 영원히 비활성화 상태로 멈춰있지 않도록 원복.
+      // (다운로드/공유 버튼을 다시 누르면 재시도하도록 되어 있음)
+      console.error('티켓 이미지 생성 실패:', err);
+      window.ticketDataUrl = null;
+      downloadBtn.disabled = false;
+      shareBtn.disabled = false;
+      hint.hidden = false;
+      hint.textContent = '이미지 생성에 실패했어요. 버튼을 다시 눌러주세요.';
     });
-  });
 }
 
 // ---------------------------------------------------------
@@ -483,13 +494,27 @@ function setupResultActions() {
 
 function downloadTicket() {
   var dataUrl = window.ticketDataUrl;
-  if (!dataUrl) return;
+  if (!dataUrl) {
+    // 아직 캡처가 안 됐거나(생성 중) 실패한 상태 -> 다시 생성 시도
+    generateTicketImage();
+    return;
+  }
 
   var isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
   if (isIOS) {
     // iOS Safari는 이미지에 대한 <a download>를 제대로 지원하지 않음.
     // 이미지를 화면에 띄워서(페이지 이동) 사용자가 길게 눌러 저장하게 유도.
-    window.location.href = dataUrl;
+    // data: URI를 그대로 location.href에 넣으면 티켓이 복잡해질수록
+    // URL이 매우 길어져 iOS Safari에서 네비게이션이 조용히 실패할 수 있어서
+    // blob: URL(짧은 참조)로 변환해서 이동.
+    fetch(dataUrl)
+      .then((res) => res.blob())
+      .then((blob) => {
+        window.location.href = URL.createObjectURL(blob);
+      })
+      .catch(() => {
+        window.location.href = dataUrl; // blob 변환 실패 시에만 원래 방식으로 폴백
+      });
     return;
   }
 
@@ -507,7 +532,10 @@ function downloadTicket() {
 
 function shareTicket() {
   var dataUrl = window.ticketDataUrl;
-  if (!dataUrl) return;
+  if (!dataUrl) {
+    generateTicketImage();
+    return;
+  }
 
   fetch(dataUrl)
     .then((res) => res.blob())
