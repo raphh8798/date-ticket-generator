@@ -690,6 +690,7 @@ input[type="time"].text-input {
   font-size: 15px;
   font-weight: 700;
   color: var(--ink);
+   line-height: 1.4;
 }
 
 .ticket-message-row {
