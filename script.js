@@ -500,34 +500,28 @@ function downloadTicket() {
     return;
   }
 
-  var isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
-  if (isIOS) {
-    // iOS Safari는 이미지에 대한 <a download>를 제대로 지원하지 않음.
-    // 이미지를 화면에 띄워서(페이지 이동) 사용자가 길게 눌러 저장하게 유도.
-    // data: URI를 그대로 location.href에 넣으면 티켓이 복잡해질수록
-    // URL이 매우 길어져 iOS Safari에서 네비게이션이 조용히 실패할 수 있어서
-    // blob: URL(짧은 참조)로 변환해서 이동.
-    fetch(dataUrl)
-      .then((res) => res.blob())
-      .then((blob) => {
-        window.location.href = URL.createObjectURL(blob);
-      })
-      .catch(() => {
-        window.location.href = dataUrl; // blob 변환 실패 시에만 원래 방식으로 폴백
-      });
-    return;
-  }
+  // iOS 포함 모든 플랫폼에서 동일하게 <a download> + blob URL 사용.
+  // (iOS Safari도 "다운로드하시겠습니까?" 확인창을 띄우고 Files 앱에
+  //  실제로 저장해줌 — 예전에 안 됐던 건 blob URL을 너무 빨리
+  //  revoke해버려서 그랬던 것. data: URI로 location.href 이동시키는
+  //  방식은 이미지만 보여주고 "꾹 눌러 저장"을 유도할 뿐이라
+  //  실제 다운로드 경험과 달라서 제외함)
+  fetch(dataUrl)
+    .then((res) => res.blob())
+    .then((blob) => {
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.download = `date-ticket-${dateData.to || 'ticket'}.png`;
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
 
-  var link = document.createElement('a');
-  link.download = `date-ticket-${dateData.to || 'ticket'}.png`;
-  link.href = dataUrl;
-  document.body.appendChild(link);
-  link.click();
-
-  // 일부 브라우저의 다운로드 확인 지연을 고려해 정리도 지연
-  setTimeout(() => {
-    document.body.removeChild(link);
-  }, 3000);
+      // iOS Safari의 다운로드 확인창 처리 시간을 넉넉히 고려해서 정리 지연
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 5000);
+    });
 }
 
 function shareTicket() {
