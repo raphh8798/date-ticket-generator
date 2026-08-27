@@ -160,7 +160,7 @@
         </div>
 
         <label class="field-label" for="input-place-custom">직접 입력 (선택)</label>
-        <input type="text" id="input-place-custom" class="text-input" placeholder="원하는 장소를 적어주세요">
+        <input type="text" id="input-place-custom" class="text-input" placeholder="원하는 장소를 적어주세요" maxlength="12">
 
         <div class="step-nav">
           <button type="button" class="btn btn-text btn-prev" data-prev-target="datetime">이전</button>
@@ -311,7 +311,7 @@
               </div>
               <div class="ticket-field ticket-field--full">
                 <span class="ticket-label">REQUESTS</span>
-                <span class="ticket-value" id="ticketRequests">-</span>
+                <div class="ticket-requests-list" id="ticketRequests">-</div>
               </div>
 
               <div class="ticket-message-row">
@@ -342,9 +342,11 @@
 
         <img id="ticketImage" class="ticket-image" alt="데이트 티켓" style="display:none;">
 
+        <p class="generating-hint" id="generatingHint">티켓 이미지 만드는 중...</p>
+
         <div class="result-actions">
-          <button type="button" id="btn-download" class="btn btn-primary">이미지 다운로드</button>
-          <button type="button" id="btn-share" class="btn btn-secondary">공유하기</button>
+          <button type="button" id="btn-download" class="btn btn-primary" disabled>이미지 다운로드</button>
+          <button type="button" id="btn-share" class="btn btn-secondary" disabled>공유하기</button>
         </div>
 
         <p class="hint-text">이 티켓을 캡처하거나 공유해서 상대방에게 보여주세요!</p>

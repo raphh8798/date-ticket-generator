@@ -666,6 +666,7 @@ input[type="time"].text-input {
 
 .ticket-field {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -693,11 +694,48 @@ input[type="time"].text-input {
   line-height: 1.4;
 }
 
+/* DATE/TIME/PLACE/SEAT는 절대 두 줄로 안 감기게 강제.
+   (html2canvas가 커스텀 한글 폰트로 줄바꿈된 텍스트를 겹쳐 그리는
+   버그가 있어서, 애초에 줄바꿈이 안 일어나게 하는 게 가장 확실한 회피책) */
+.ticket-field .ticket-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* REQUESTS: 긴 텍스트 하나 대신 항목마다 칩(배지)으로 분리해서
+   칩 하나하나는 줄바꿈 없이 렌더링되고, 칩들의 줄바꿈은
+   flex-wrap(레이아웃 단계)에서 처리되어 html2canvas 텍스트 줄바꿈 버그를 피함 */
+.ticket-requests-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.request-chip {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  background: var(--pink-50);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
 .ticket-image {
   width: 100%;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow);
   display: block;
+}
+
+.generating-hint {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pink-600);
+  margin: 0;
 }
 
 .ticket-message-row {

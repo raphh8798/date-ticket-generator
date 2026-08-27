@@ -329,8 +329,7 @@ function renderTicket() {
   document.getElementById('ticketTime').textContent = dateData.time || '-';
   document.getElementById('ticketPlace').textContent = dateData.place || '-';
   document.getElementById('ticketSeat').textContent = dateData.seat || '-';
-  document.getElementById('ticketRequests').textContent =
-    dateData.requests.length ? dateData.requests.join(', ') : '-';
+  renderRequestChips();
   document.getElementById('ticketMessage').textContent = dateData.message ? `"${dateData.message}"` : '';
 
   // 오른쪽 스텁(찢어지는 조각)에도 핵심 정보를 반복 표기 (실제 영화 티켓처럼)
@@ -342,6 +341,25 @@ function renderTicket() {
   document.getElementById('stubSeat').textContent = dateData.seat || '-';
 
   renderBarcode(ticketNo);
+}
+
+// 요청사항을 하나의 긴 텍스트로 합치지 않고 칩(배지)마다 따로 그려서
+// html2canvas가 커스텀 한글 폰트로 줄바꿈된 텍스트를 겹쳐 그리는 문제를 회피
+function renderRequestChips() {
+  var container = document.getElementById('ticketRequests');
+  container.innerHTML = '';
+
+  if (!dateData.requests.length) {
+    container.textContent = '-';
+    return;
+  }
+
+  dateData.requests.forEach((req) => {
+    var chip = document.createElement('span');
+    chip.className = 'request-chip';
+    chip.textContent = req;
+    container.appendChild(chip);
+  });
 }
 
 // 바코드 막대 그리기 (티켓 번호를 시드로 막대 폭을 결정해 매번 같은 티켓은 같은 무늬가 나오게 함)
@@ -379,6 +397,14 @@ function generateTicketNumber() {
 // (폰트 로딩 완료 후 한 번만 캡처 → 텍스트 겹침 방지 + 다운로드/공유가 같은 이미지 재사용)
 // ---------------------------------------------------------
 function generateTicketImage() {
+  var downloadBtn = document.getElementById('btn-download');
+  var shareBtn = document.getElementById('btn-share');
+  var hint = document.getElementById('generatingHint');
+
+  downloadBtn.disabled = true;
+  shareBtn.disabled = true;
+  hint.hidden = false;
+
   document.fonts.ready.then(() => {
     html2canvas(document.getElementById('ticket'), {
       scale: 2,
@@ -392,6 +418,10 @@ function generateTicketImage() {
       img.src = dataUrl;
       img.style.display = 'block';
       document.getElementById('ticket').style.display = 'none';
+
+      downloadBtn.disabled = false;
+      shareBtn.disabled = false;
+      hint.hidden = true;
     });
   });
 }
