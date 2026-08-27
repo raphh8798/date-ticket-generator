@@ -748,6 +748,7 @@ input[type="time"].text-input {
 
 .ticket-message {
   align-self: stretch;
+  min-width: 0;
   margin: 0;
   text-align: left;
   font-size: 13px;
@@ -755,6 +756,11 @@ input[type="time"].text-input {
   color: var(--ink-soft);
   line-height: 1.5;
   min-height: 18px;
+  /* 한마디 메시지도 두 줄로 감기면 html2canvas가 커스텀 한글 폰트
+     텍스트를 겹쳐 그리는 문제가 있어서, 한 줄로 고정하고 넘치면 잘라냄 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 귀여운 도장 그래픽 - 실제 찍은 것처럼 살짝 기울여서 크게 배치 */
