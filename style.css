@@ -825,6 +825,14 @@ input[type="time"].text-input {
   margin: 0;
 }
 
+.save-hint {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pink-600);
+  margin: -6px 0 0;
+}
+
 /* ---------------------------------------------------------
    반응형
 --------------------------------------------------------- */
