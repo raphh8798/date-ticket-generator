@@ -5,7 +5,7 @@
 친구나 연인에게 보낼 수 있는 **데이트 신청 링크**를 만들고, 신청이 성사되면
 영화 티켓처럼 생긴 **데이트 티켓 이미지**를 다운로드/공유할 수 있는 웹앱입니다.
 
-🔗 **바로 써보기**: https://date-ticket-generator.netlify.app/
+🔗 **바로 써보기**: https://raphh8798.github.io/date-ticket-generator/
 
 ## ✨ 주요 기능
 
