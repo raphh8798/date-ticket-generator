@@ -155,6 +155,7 @@ h1, h2 {
 
 .text-input {
   width: 100%;
+  min-width: 0;
   font-family: inherit;
   font-size: 16px;
   color: var(--ink);
@@ -169,6 +170,13 @@ h1, h2 {
 .text-input:focus {
   border-color: var(--pink-500);
   background: var(--white);
+}
+
+/* iOS Safari가 date/time 입력창에 자체 최소 폭을 강제하는 것 방지 */
+input[type="date"].text-input,
+input[type="time"].text-input {
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .textarea {
