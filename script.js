@@ -1,10 +1,3 @@
-/* =========================================================
-   데이트 신청 사이트 - 기능 구현 스켈레톤
-   디자인(HTML/CSS)은 완성되어 있고, 아래 함수들의 로직만
-   비어 있습니다. 자세한 구현 방법은 GUIDE.md 를 참고하세요.
-   각 함수 옆 주석의 "GUIDE.md > n."을 찾아가면 됩니다.
-   ========================================================= */
-
 // ---------------------------------------------------------
 // 상태: 사용자가 각 단계에서 선택/입력한 값을 담는 객체
 // ---------------------------------------------------------
@@ -390,10 +383,16 @@ function setupResultActions() {
 
 function downloadTicket() {
   html2canvas(document.getElementById('ticket'), { scale: 2, backgroundColor: null }).then((canvas) => {
-    var link = document.createElement('a');
-    link.download = `date-ticket-${dateData.to || 'ticket'}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    canvas.toBlob((blob) => {
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.download = `date-ticket-${dateData.to || 'ticket'}.png`;
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 'image/png');
   });
 }
 
