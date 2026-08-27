@@ -382,9 +382,7 @@ function setupResultActions() {
 }
 
 function downloadTicket() {
-  // 폰트가 완전히 로드된 뒤에 캡처해야 텍스트 줄바꿈/겹침 문제가 안 생김
-  document.fonts.ready.then(() => {
-    html2canvas(element, { useCORS: true }).then(canvas => {
+  html2canvas(element, { useCORS: true }).then(canvas => {
       const myImage = canvas.toDataURL('image/png');
       
       // iOS 환경 체크
@@ -400,7 +398,6 @@ function downloadTicket() {
           link.download = 'capture.png';
           link.click();
       }
-    });
   });
 }
 
