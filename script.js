@@ -316,10 +316,44 @@ function setupMessageStep() {
   textarea.addEventListener('input', () => { dateData.message = textarea.value.trim(); });
 
   document.getElementById('btn-next-message').addEventListener('click', () => {
-    renderTicket();
+    // renderTicket()이 요소의 실제 렌더링 폭을 측정해서 텍스트를 잘라야 하므로,
+    // 화면이 보이는 상태(goToStep)가 된 뒤에 호출해야 함 (안 그러면 폭이 0으로 측정됨)
     goToStep('result');
+    renderTicket();
     generateTicketImage();
   });
+}
+
+// ---------------------------------------------------------
+// 요소의 실제 렌더링 폭에 맞춰 텍스트를 직접 잘라서 "..." 을 붙여 반환.
+// CSS의 text-overflow:ellipsis는 html2canvas가 제대로 그려주지 않아서
+// (말줄임표 없이 그냥 잘려버림), 캡처 이미지에서도 안전하도록
+// DOM에 넣는 텍스트 자체를 미리 잘라서 넣는 방식으로 처리.
+// ---------------------------------------------------------
+function truncateTextToFit(el, text, opts) {
+  if (!text) return text;
+  opts = opts || {};
+  var prefix = opts.prefix || '';
+  var suffix = opts.suffix || '';
+
+  var maxWidth = el.clientWidth;
+  if (!maxWidth) return prefix + text + suffix; // 아직 레이아웃 전이면 자르지 않고 원본 반환
+
+  var style = getComputedStyle(el);
+  var font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+  var canvas = truncateTextToFit._canvas || (truncateTextToFit._canvas = document.createElement('canvas'));
+  var ctx = canvas.getContext('2d');
+  ctx.font = font;
+
+  var full = prefix + text + suffix;
+  if (ctx.measureText(full).width <= maxWidth) return full;
+
+  var ellipsis = '…';
+  var result = text;
+  while (result.length > 0 && ctx.measureText(prefix + result + ellipsis + suffix).width > maxWidth) {
+    result = result.slice(0, -1);
+  }
+  return prefix + result + ellipsis + suffix;
 }
 
 // ---------------------------------------------------------
@@ -331,10 +365,19 @@ function renderTicket() {
   document.getElementById('ticketType').textContent = dateData.type || '-';
   document.getElementById('ticketDate').textContent = dateData.date || '-';
   document.getElementById('ticketTime').textContent = dateData.time || '-';
-  document.getElementById('ticketPlace').textContent = dateData.place || '-';
-  document.getElementById('ticketSeat').textContent = dateData.seat || '-';
+
+  var placeEl = document.getElementById('ticketPlace');
+  placeEl.textContent = truncateTextToFit(placeEl, dateData.place || '-');
+
+  var seatEl = document.getElementById('ticketSeat');
+  seatEl.textContent = truncateTextToFit(seatEl, dateData.seat || '-');
+
   renderRequestChips();
-  document.getElementById('ticketMessage').textContent = dateData.message ? `"${dateData.message}"` : '';
+
+  var messageEl = document.getElementById('ticketMessage');
+  messageEl.textContent = dateData.message
+    ? truncateTextToFit(messageEl, dateData.message, { prefix: '"', suffix: '"' })
+    : '';
 
   // 오른쪽 스텁(찢어지는 조각)에도 핵심 정보를 반복 표기 (실제 영화 티켓처럼)
   var ticketNo = generateTicketNumber();
