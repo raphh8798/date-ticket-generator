@@ -314,6 +314,7 @@ function setupMessageStep() {
   document.getElementById('btn-next-message').addEventListener('click', () => {
     renderTicket();
     goToStep('result');
+    generateTicketImage();
   });
 }
 
@@ -374,7 +375,29 @@ function generateTicketNumber() {
 }
 
 // ---------------------------------------------------------
-// 티켓 다운로드 / 공유
+// 결과 화면 진입 시 티켓을 이미지로 캡처해서 <img>로 교체
+// (폰트 로딩 완료 후 한 번만 캡처 → 텍스트 겹침 방지 + 다운로드/공유가 같은 이미지 재사용)
+// ---------------------------------------------------------
+function generateTicketImage() {
+  document.fonts.ready.then(() => {
+    html2canvas(document.getElementById('ticket'), {
+      scale: 2,
+      backgroundColor: null,
+      useCORS: true,
+    }).then((canvas) => {
+      var dataUrl = canvas.toDataURL('image/png');
+      window.ticketDataUrl = dataUrl;
+
+      var img = document.getElementById('ticketImage');
+      img.src = dataUrl;
+      img.style.display = 'block';
+      document.getElementById('ticket').style.display = 'none';
+    });
+  });
+}
+
+// ---------------------------------------------------------
+// 티켓 다운로드 / 공유 (generateTicketImage()가 만들어둔 이미지 재사용)
 // ---------------------------------------------------------
 function setupResultActions() {
   document.getElementById('btn-download').addEventListener('click', downloadTicket);
@@ -382,28 +405,36 @@ function setupResultActions() {
 }
 
 function downloadTicket() {
-  html2canvas(element, { useCORS: true }).then(canvas => {
-      const myImage = canvas.toDataURL('image/png');
-      
-      // iOS 환경 체크
-      const isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
-      
-      if (isIOS) {
-          // iOS에서는 새 창(탭)으로 이미지를 띄워 사용자가 꾹 눌러 저장하게 유도
-          window.location.href = myImage;
-      } else {
-          // 안드로이드 및 PC
-          const link = document.createElement('a');
-          link.href = myImage;
-          link.download = 'capture.png';
-          link.click();
-      }
-  });
+  var dataUrl = window.ticketDataUrl;
+  if (!dataUrl) return;
+
+  var isIOS = /iP(hone|ad|od)/i.test(navigator.userAgent);
+  if (isIOS) {
+    // iOS Safari는 이미지에 대한 <a download>를 제대로 지원하지 않음.
+    // 이미지를 화면에 띄워서(페이지 이동) 사용자가 길게 눌러 저장하게 유도.
+    window.location.href = dataUrl;
+    return;
+  }
+
+  var link = document.createElement('a');
+  link.download = `date-ticket-${dateData.to || 'ticket'}.png`;
+  link.href = dataUrl;
+  document.body.appendChild(link);
+  link.click();
+
+  // 일부 브라우저의 다운로드 확인 지연을 고려해 정리도 지연
+  setTimeout(() => {
+    document.body.removeChild(link);
+  }, 3000);
 }
 
 function shareTicket() {
-  html2canvas(document.getElementById('ticket'), { scale: 2, backgroundColor: null }).then((canvas) => {
-    canvas.toBlob((blob) => {
+  var dataUrl = window.ticketDataUrl;
+  if (!dataUrl) return;
+
+  fetch(dataUrl)
+    .then((res) => res.blob())
+    .then((blob) => {
       var file = new File([blob], 'date-ticket.png', { type: 'image/png' });
 
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -415,6 +446,5 @@ function shareTicket() {
       } else {
         downloadTicket(); // 공유 API 미지원 브라우저는 다운로드로 대체
       }
-    }, 'image/png');
-  });
+    });
 }

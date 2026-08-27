@@ -690,7 +690,14 @@ input[type="time"].text-input {
   font-size: 15px;
   font-weight: 700;
   color: var(--ink);
-   line-height: 1.4;
+  line-height: 1.4;
+}
+
+.ticket-image {
+  width: 100%;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  display: block;
 }
 
 .ticket-message-row {
