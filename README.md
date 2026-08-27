@@ -15,9 +15,12 @@
 - **데이트 티켓 생성**: 입력한 내용이 영화 티켓 스타일의 카드로 완성되고, 이미지로 다운로드하거나 공유할 수 있습니다.
 
 ## 🛠 기술 스택
-
-- HTML / CSS / Vanilla JavaScript (프레임워크 없음)
-- [html2canvas](https://html2canvas.hertzen.com/) — 티켓을 이미지로 캡처
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![html2canvas](https://img.shields.io/badge/html2canvas-1.4.1-8A2BE2?style=for-the-badge)
+![Google Fonts](https://img.shields.io/badge/Google%20Fonts-4285F4?style=for-the-badge&logo=googlefonts&logoColor=white)
+![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
 - Google Fonts (Jua, Gowun Dodum)
 
 ## 🚀 실행 방법
